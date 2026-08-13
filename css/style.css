@@ -1,0 +1,218 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family: Arial, sans-serif;
+
+    background: #f8fafc;
+
+    color: #0f172a;
+
+}
+
+
+/* =========================
+   AUTH
+========================= */
+
+.auth-container {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+.auth-box {
+
+    width: 400px;
+
+    padding: 35px;
+
+    background: white;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.10);
+
+}
+
+
+.auth-box h1 {
+
+    color: #2563eb;
+
+    margin-bottom: 10px;
+
+}
+
+
+.auth-box p {
+
+    margin-bottom: 20px;
+
+}
+
+
+.auth-box form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+
+}
+
+
+.auth-box input {
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+
+}
+
+
+.auth-box button {
+
+    padding: 12px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+}
+
+
+.auth-box button:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+.auth-box a {
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+}
+
+
+#message {
+
+    color: #dc2626;
+
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard {
+
+    padding: 40px;
+
+}
+
+
+.dashboard h1 {
+
+    color: #2563eb;
+
+    margin-bottom: 10px;
+
+}
+
+
+.dashboard-cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 20px;
+
+    margin-top: 30px;
+
+}
+
+
+.card {
+
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.08);
+
+}
+
+
+.card h3 {
+
+    margin-bottom: 15px;
+
+}
+
+
+.card p {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+}
+
+
+#logoutButton {
+
+    margin-top: 30px;
+
+    padding: 10px 20px;
+
+    background: #dc2626;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+}
