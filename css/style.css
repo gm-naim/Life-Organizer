@@ -16,13 +16,9 @@ body {
 }
 
 
-/* =========================
-   AUTH
-========================= */
+/* Login and Signup */
 
 .auth-container {
-
-    width: 100%;
 
     min-height: 100vh;
 
@@ -134,9 +130,7 @@ body {
 }
 
 
-/* =========================
-   DASHBOARD
-========================= */
+/* Dashboard */
 
 .dashboard {
 
@@ -148,8 +142,6 @@ body {
 .dashboard h1 {
 
     color: #2563eb;
-
-    margin-bottom: 10px;
 
 }
 

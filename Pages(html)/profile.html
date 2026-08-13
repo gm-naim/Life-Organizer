@@ -1,73 +1,112 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Life Organizer - Profile</title>
+    <title>
+        Life Organizer - Profile
+    </title>
 
-    <link rel="stylesheet"
-          href="../css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
 
 </head>
 
 
 <body>
 
+
     <div class="profile-container">
 
-        <h1>My Profile</h1>
 
-        <p>Manage your personal information</p>
+        <h1>
+            My Profile
+        </h1>
 
 
-        <!-- Profile Card -->
+        <p>
+            Manage your personal information
+        </p>
+
+
+        <!-- =========================
+             Profile Card
+        ========================== -->
 
         <div class="profile-card">
 
+
             <div class="profile-icon">
+
                 👤
+
             </div>
 
 
+            <!-- Name -->
+
             <h2 id="profileName">
+
                 User Name
+
             </h2>
 
 
+            <!-- Email -->
+
             <p id="profileEmail">
+
                 user@email.com
+
             </p>
 
 
             <hr>
 
 
-            <!-- Name -->
+            <!-- =========================
+                 User Information
+            ========================== -->
+
 
             <div class="profile-info">
 
-                <strong>Name</strong>
+                <strong>
+                    Name
+                </strong>
+
 
                 <span id="nameText">
+
                     -
+
                 </span>
 
             </div>
 
 
-            <!-- Email -->
-
             <div class="profile-info">
 
-                <strong>Email</strong>
+                <strong>
+                    Email
+                </strong>
+
 
                 <span id="emailText">
+
                     -
+
                 </span>
 
             </div>
@@ -76,34 +115,74 @@
             <br>
 
 
+            <!-- =========================
+                 Edit Profile
+            ========================== -->
+
+
+            <button
+                type="button"
+                onclick="editProfile()"
+            >
+
+                ✏️ Edit Profile
+
+            </button>
+
+
+            <br><br>
+
+
+            <!-- =========================
+                 Back
+            ========================== -->
+
+
             <button
                 type="button"
                 onclick="goBack()"
             >
+
                 ← Back to Dashboard
+
             </button>
+
+
+            <br><br>
+
+
+            <!-- =========================
+                 Logout
+            ========================== -->
 
 
             <button
                 type="button"
                 onclick="logout()"
             >
+
                 Logout
+
             </button>
+
 
         </div>
 
     </div>
 
 
+
     <script>
 
-        // =========================
+
+        // =====================================
         // LOGIN CHECK
-        // =========================
+        // =====================================
 
         const loggedIn =
-            localStorage.getItem("loggedIn");
+            localStorage.getItem(
+                "loggedIn"
+            );
 
 
         if (loggedIn !== "true") {
@@ -114,50 +193,301 @@
         }
 
 
-        // =========================
-        // GET USER INFORMATION
-        // =========================
 
-        const userName =
-            localStorage.getItem("userName");
+        // =====================================
+        // GET CURRENT USER
+        // =====================================
 
-        const userEmail =
-            localStorage.getItem("userEmail");
+        let userName =
+            localStorage.getItem(
+                "userName"
+            );
 
 
-        // Show name
+        let userEmail =
+            localStorage.getItem(
+                "userEmail"
+            );
 
-        if (userName) {
 
-            document.getElementById(
-                "profileName"
-            ).textContent = userName;
 
-            document.getElementById(
-                "nameText"
-            ).textContent = userName;
+        // =====================================
+        // SHOW USER INFORMATION
+        // =====================================
+
+        function showUserInfo() {
+
+
+            if (userName) {
+
+                document.getElementById(
+                    "profileName"
+                ).textContent =
+                    userName;
+
+
+                document.getElementById(
+                    "nameText"
+                ).textContent =
+                    userName;
+
+            }
+
+
+            if (userEmail) {
+
+                document.getElementById(
+                    "profileEmail"
+                ).textContent =
+                    userEmail;
+
+
+                document.getElementById(
+                    "emailText"
+                ).textContent =
+                    userEmail;
+
+            }
 
         }
 
 
-        // Show email
+        showUserInfo();
 
-        if (userEmail) {
 
-            document.getElementById(
-                "profileEmail"
-            ).textContent = userEmail;
 
-            document.getElementById(
-                "emailText"
-            ).textContent = userEmail;
+        // =====================================
+        // EDIT PROFILE
+        // =====================================
+
+        async function editProfile() {
+
+
+            // Ask for new name
+
+            const newName =
+                prompt(
+                    "Enter your new name:",
+                    userName
+                );
+
+
+            // Cancel
+
+            if (newName === null) {
+
+                return;
+
+            }
+
+
+            // Ask for new email
+
+            const newEmail =
+                prompt(
+                    "Enter your new email:",
+                    userEmail
+                );
+
+
+            // Cancel
+
+            if (newEmail === null) {
+
+                return;
+
+            }
+
+
+            // Check empty value
+
+            if (
+                newName.trim() === ""
+                ||
+                newEmail.trim() === ""
+            ) {
+
+                alert(
+                    "Name and email cannot be empty."
+                );
+
+                return;
+
+            }
+
+
+
+            // =====================================
+            // GET ALL USERS
+            // =====================================
+
+            const users =
+                await window.electronAPI.getUsers();
+
+
+
+            // =====================================
+            // CHECK EMAIL
+            // =====================================
+
+            const emailExists =
+                users.some(
+                    function(user) {
+
+                        return (
+
+                            user.email.toLowerCase()
+                            ===
+                            newEmail.trim().toLowerCase()
+
+                            &&
+
+                            user.email.toLowerCase()
+                            !==
+                            userEmail.toLowerCase()
+
+                        );
+
+                    }
+                );
+
+
+            if (emailExists) {
+
+                alert(
+                    "This email is already used by another account."
+                );
+
+                return;
+
+            }
+
+
+
+            // =====================================
+            // FIND CURRENT USER
+            // =====================================
+
+            const currentUser =
+                users.find(
+                    function(user) {
+
+                        return (
+
+                            user.email.toLowerCase()
+                            ===
+                            userEmail.toLowerCase()
+
+                        );
+
+                    }
+                );
+
+
+            if (!currentUser) {
+
+                alert(
+                    "User not found."
+                );
+
+                return;
+
+            }
+
+
+
+            // =====================================
+            // CREATE UPDATED USER
+            // =====================================
+
+            const updatedUser = {
+
+                name:
+                    newName.trim(),
+
+                email:
+                    newEmail.trim(),
+
+                password:
+                    currentUser.password
+
+            };
+
+
+
+            // =====================================
+            // UPDATE DATA.JSON
+            // =====================================
+
+            const success =
+                await window.electronAPI.updateUser(
+
+                    userEmail,
+
+                    updatedUser
+
+                );
+
+
+
+            // =====================================
+            // SUCCESS
+            // =====================================
+
+            if (success) {
+
+
+                // Update localStorage
+
+                localStorage.setItem(
+                    "userName",
+                    updatedUser.name
+                );
+
+
+                localStorage.setItem(
+                    "userEmail",
+                    updatedUser.email
+                );
+
+
+                // Update variables
+
+                userName =
+                    updatedUser.name;
+
+
+                userEmail =
+                    updatedUser.email;
+
+
+                // Show updated information
+
+                showUserInfo();
+
+
+                alert(
+                    "Profile updated successfully!"
+                );
+
+            }
+
+
+            else {
+
+                alert(
+                    "Profile update failed."
+                );
+
+            }
 
         }
 
 
-        // =========================
+
+        // =====================================
         // BACK TO DASHBOARD
-        // =========================
+        // =====================================
 
         function goBack() {
 
@@ -167,19 +497,23 @@
         }
 
 
-        // =========================
+
+        // =====================================
         // LOGOUT
-        // =========================
+        // =====================================
 
         function logout() {
+
 
             localStorage.removeItem(
                 "loggedIn"
             );
 
+
             localStorage.removeItem(
                 "userName"
             );
+
 
             localStorage.removeItem(
                 "userEmail"
@@ -191,7 +525,9 @@
 
         }
 
+
     </script>
+
 
 </body>
 
