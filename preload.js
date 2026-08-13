@@ -3,8 +3,22 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
 
-    getUser: () => ipcRenderer.invoke("get-user"),
+    // Get all users
+    getUsers: function() {
 
-    saveUser: (user) => ipcRenderer.invoke("save-user", user)
+        return ipcRenderer.invoke("get-users");
+
+    },
+
+
+    // Save new user
+    saveUser: function(user) {
+
+        return ipcRenderer.invoke(
+            "save-user",
+            user
+        );
+
+    }
 
 });

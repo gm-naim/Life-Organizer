@@ -1,199 +1,202 @@
-const signupForm = document.getElementById("signupForm");
-const loginForm = document.getElementById("loginForm");
+const signupForm =
+    document.getElementById("signupForm");
+
+const loginForm =
+    document.getElementById("loginForm");
 
 
-
-/* =========================
-   SIGN UP
-========================= */
+// =================================
+// SIGN UP
+// =================================
 
 if (signupForm) {
 
-    signupForm.addEventListener("submit", async function(event) {
+    signupForm.addEventListener(
+        "submit",
+        async function(event) {
 
-        event.preventDefault();
-
-
-        const name =
-            document.getElementById("name").value;
-
-        const email =
-            document.getElementById("email").value;
-
-        const password =
-            document.getElementById("password").value;
-
-        const confirmPassword =
-            document.getElementById("confirmPassword").value;
-
-        const message =
-            document.getElementById("message");
+            event.preventDefault();
 
 
-        if (password !== confirmPassword) {
+            const name =
+                document.getElementById("name").value.trim();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+            const confirmPassword =
+                document.getElementById(
+                    "confirmPassword"
+                ).value;
+
+            const message =
+                document.getElementById("message");
+
+
+            // Check password
+
+            if (password !== confirmPassword) {
+
+                message.textContent =
+                    "Passwords do not match.";
+
+                return;
+            }
+
+
+            // Get all users
+
+            const users =
+                await window.electronAPI.getUsers();
+
+
+            // Check if email already exists
+
+            const emailExists =
+                users.some(function(user) {
+
+                    return user.email.toLowerCase()
+                        === email.toLowerCase();
+
+                });
+
+
+            if (emailExists) {
+
+                message.textContent =
+                    "This email is already registered.";
+
+                return;
+            }
+
+
+            // Create new user
+
+            const newUser = {
+
+                name: name,
+
+                email: email,
+
+                password: password
+
+            };
+
+
+            // Save new user
+
+            await window.electronAPI.saveUser(
+                newUser
+            );
+
+
+            message.style.color = "green";
 
             message.textContent =
-                "Passwords do not match.";
+                "Account created successfully!";
 
-            return;
+
+            // Go to login page
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "login.html";
+
+            }, 1000);
+
         }
-
-
-        const oldUser =
-            await window.electronAPI.getUser();
-
-
-        if (oldUser !== null) {
-
-            message.textContent =
-                "An account already exists.";
-
-            return;
-        }
-
-
-        const user = {
-
-            name: name,
-
-            email: email,
-
-            password: password
-
-        };
-
-
-        await window.electronAPI.saveUser(user);
-
-
-        message.textContent =
-            "Account created successfully!";
-
-
-        setTimeout(function() {
-
-            window.location.href =
-                "login.html";
-
-        }, 1000);
-
-    });
+    );
 
 }
 
 
-
-/* =========================
-   LOGIN
-========================= */
+// =================================
+// LOGIN
+// =================================
 
 if (loginForm) {
 
-    loginForm.addEventListener("submit", async function(event) {
+    loginForm.addEventListener(
+        "submit",
+        async function(event) {
 
-        event.preventDefault();
-
-
-        const email =
-            document.getElementById("loginEmail").value;
-
-        const password =
-            document.getElementById("loginPassword").value;
-
-        const message =
-            document.getElementById("message");
+            event.preventDefault();
 
 
-        const user =
-            await window.electronAPI.getUser();
+            const email =
+                document.getElementById(
+                    "loginEmail"
+                ).value.trim();
+
+            const password =
+                document.getElementById(
+                    "loginPassword"
+                ).value;
+
+            const message =
+                document.getElementById("message");
 
 
-        if (user === null) {
+            // Get all users
 
-            message.textContent =
-                "No account found. Please sign up first.";
+            const users =
+                await window.electronAPI.getUsers();
 
-            return;
+
+            // Find matching user
+
+            const user =
+                users.find(function(user) {
+
+                    return (
+                        user.email.toLowerCase()
+                        === email.toLowerCase()
+                        &&
+                        user.password === password
+                    );
+
+                });
+
+
+            // Login successful
+
+            if (user) {
+
+                localStorage.setItem(
+                    "loggedIn",
+                    "true"
+                );
+
+
+                localStorage.setItem(
+                    "userName",
+                    user.name
+                );
+
+
+                localStorage.setItem(
+                    "userEmail",
+                    user.email
+                );
+
+
+                window.location.href =
+                    "dashboard.html";
+
+            }
+
+            else {
+
+                message.textContent =
+                    "Wrong email or password.";
+
+            }
+
         }
-
-
-        if (
-            email === user.email &&
-            password === user.password
-        ) {
-
-            localStorage.setItem(
-                "loggedIn",
-                "true"
-            );
-
-
-            localStorage.setItem(
-                "userName",
-                user.name
-            );
-
-
-            window.location.href =
-                "dashboard.html";
-
-        } else {
-
-            message.textContent =
-                "Wrong email or password.";
-
-        }
-
-    });
-
-}
-
-
-
-/* =========================
-   DASHBOARD
-========================= */
-
-const welcomeName =
-    document.getElementById("welcomeName");
-
-
-if (welcomeName) {
-
-    const name =
-        localStorage.getItem("userName");
-
-
-    if (name) {
-
-        welcomeName.textContent =
-            "Welcome, " + name + "!";
-
-    }
-
-}
-
-
-
-/* =========================
-   LOGOUT
-========================= */
-
-const logoutButton =
-    document.getElementById("logoutButton");
-
-
-if (logoutButton) {
-
-    logoutButton.addEventListener("click", function() {
-
-        localStorage.removeItem("loggedIn");
-
-        localStorage.removeItem("userName");
-
-        window.location.href =
-            "login.html";
-
-    });
+    );
 
 }

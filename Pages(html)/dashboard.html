@@ -5,75 +5,148 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Dashboard - Life Organizer</title>
+    <title>Life Organizer - Dashboard</title>
 
-    <link
-        rel="stylesheet"
-        href="../css/style.css"
-    >
+    <link rel="stylesheet" href="../css/style.css">
 
 </head>
 
 
 <body>
 
+    <div class="dashboard">
 
-<div class="dashboard">
+        <h1>Life Organizer</h1>
 
-    <h1>Welcome to Life Organizer</h1>
+        <h2 id="welcomeName">
+            Welcome!
+        </h2>
 
-
-    <h2 id="welcomeName">
-        Welcome!
-    </h2>
-
-
-    <p>
-        Your personal organizer is ready.
-    </p>
+        <p>
+            Keep Everything That Matters
+        </p>
 
 
-    <div class="dashboard-cards">
+        <!-- Dashboard Cards -->
 
-        <div class="card">
-            <h3>📄 Documents</h3>
-            <p>0</p>
+        <div class="dashboard-cards">
+
+            <div class="card">
+
+                <h3>📄 Documents</h3>
+
+                <p>0</p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>🤝 Borrowed Items</h3>
+
+                <p>0</p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>🧾 Warranty</h3>
+
+                <p>0</p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>🔔 Reminders</h3>
+
+                <p>0</p>
+
+            </div>
+
         </div>
 
 
-        <div class="card">
-            <h3>🤝 Borrowed Items</h3>
-            <p>0</p>
-        </div>
+        <br><br>
 
 
-        <div class="card">
-            <h3>🧾 Warranty</h3>
-            <p>0</p>
-        </div>
+        <!-- Logout Button -->
 
-
-        <div class="card">
-            <h3>🔔 Reminders</h3>
-            <p>0</p>
-        </div>
+        <button
+            type="button"
+            onclick="logout()"
+        >
+            Logout
+        </button>
 
     </div>
 
 
-    <button id="logoutButton">
-        Logout
-    </button>
+    <script>
 
-</div>
+        // =========================
+        // LOGIN CHECK
+        // =========================
+
+        const loggedIn =
+            localStorage.getItem("loggedIn");
 
 
-<script src="../js/auth.js"></script>
+        if (loggedIn !== "true") {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        // =========================
+        // SHOW USER NAME
+        // =========================
+
+        const userName =
+            localStorage.getItem("userName");
+
+
+        if (userName) {
+
+            document.getElementById(
+                "welcomeName"
+            ).textContent =
+                "Welcome, " + userName + "!";
+
+        }
+
+
+        // =========================
+        // LOGOUT
+        // =========================
+
+        function logout() {
+
+            localStorage.removeItem(
+                "loggedIn"
+            );
+
+            localStorage.removeItem(
+                "userName"
+            );
+
+            localStorage.removeItem(
+                "userEmail"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+
+    </script>
 
 </body>
 

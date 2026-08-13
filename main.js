@@ -1,42 +1,19 @@
-const { app, BrowserWindow } = require("electron");
-const path = require("path");
-function createWindow() {
-    const win = new BrowserWindow({
-        width: 1200,
-        height: 800,
-        webPreferences: {
-            preload: path.join(__dirname, "preload.js"),
-            contextIsolation: true,
-            nodeIntegration: false
-        }
-    });
-
-    win.loadFile(path.join(__dirname, "pages", "login.html"));
-}
-
-app.whenReady().then(() => {
-    createWindow();
-
-    app.on("activate", () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
-        }
-    });
-});
-
-app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
-        app.quit();
-    }
-});
-
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
+
+// =============================
+// Data File
+// =============================
+
 const dataFolder = path.join(__dirname, "data");
 const dataFile = path.join(dataFolder, "data.json");
 
+
+// =============================
+// Create Data File
+// =============================
 
 function createDataFile() {
 
@@ -47,7 +24,7 @@ function createDataFile() {
     if (!fs.existsSync(dataFile)) {
 
         const defaultData = {
-            user: null,
+            users: [],
             documents: [],
             borrowedItems: [],
             warranties: [],
@@ -63,6 +40,10 @@ function createDataFile() {
 }
 
 
+// =============================
+// Read Data
+// =============================
+
 function readData() {
 
     const data = fs.readFileSync(
@@ -74,6 +55,10 @@ function readData() {
 }
 
 
+// =============================
+// Save Data
+// =============================
+
 function saveData(data) {
 
     fs.writeFileSync(
@@ -83,6 +68,10 @@ function saveData(data) {
 }
 
 
+// =============================
+// Create Window
+// =============================
+
 function createWindow() {
 
     const win = new BrowserWindow({
@@ -91,17 +80,31 @@ function createWindow() {
         height: 800,
 
         webPreferences: {
-            preload: path.join(__dirname, "preload.js"),
+
+            preload: path.join(
+                __dirname,
+                "preload.js"
+            ),
+
             contextIsolation: true,
             nodeIntegration: false
         }
     });
 
+
     win.loadFile(
-        path.join(__dirname, "pages", "login.html")
+        path.join(
+            __dirname,
+            "Pages(html)",
+            "login.html"
+        )
     );
 }
 
+
+// =============================
+// Start Application
+// =============================
 
 app.whenReady().then(() => {
 
@@ -109,17 +112,12 @@ app.whenReady().then(() => {
 
     createWindow();
 
-
-    app.on("activate", () => {
-
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
-        }
-
-    });
-
 });
 
+
+// =============================
+// Close Application
+// =============================
 
 app.on("window-all-closed", () => {
 
@@ -130,26 +128,37 @@ app.on("window-all-closed", () => {
 });
 
 
-/* Get user data */
+// =============================
+// GET ALL USERS
+// =============================
 
-ipcMain.handle("get-user", () => {
+ipcMain.handle(
+    "get-users",
+    () => {
 
-    const data = readData();
+        const data = readData();
 
-    return data.user;
+        return data.users;
 
-});
+    }
+);
 
 
-/* Save user data */
+// =============================
+// SAVE NEW USER
+// =============================
 
-ipcMain.handle("save-user", (event, user) => {
+ipcMain.handle(
+    "save-user",
+    (event, user) => {
 
-    const data = readData();
+        const data = readData();
 
-    data.user = user;
+        data.users.push(user);
 
-    saveData(data);
+        saveData(data);
 
-    return true;
-});
+        return true;
+
+    }
+);
