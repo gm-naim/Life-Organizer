@@ -5,95 +5,215 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Life Organizer - Dashboard</title>
 
-    <link rel="stylesheet" href="../css/style.css">
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
 
 </head>
 
 
 <body>
 
+
     <div class="dashboard">
 
-        <h1>Life Organizer</h1>
+
+        <!-- =========================
+             Header
+        ========================== -->
+
+        <div class="dashboard-header">
+
+            <div>
+
+                <h1>
+                    Life Organizer
+                </h1>
+
+                <p>
+                    Keep Everything That Matters
+                </p>
+
+            </div>
+
+
+            <!-- Profile Button -->
+
+            <button
+                type="button"
+                onclick="openProfile()"
+            >
+
+                👤 Profile
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             Welcome
+        ========================== -->
 
         <h2 id="welcomeName">
+
             Welcome!
+
         </h2>
 
-        <p>
-            Keep Everything That Matters
-        </p>
 
 
-        <!-- Dashboard Cards -->
+        <!-- =========================
+             Dashboard Cards
+        ========================== -->
 
         <div class="dashboard-cards">
 
+
+            <!-- Documents -->
+
             <div class="card">
 
-                <h3>📄 Documents</h3>
+                <h3>
+                    📄 Documents
+                </h3>
 
-                <p>0</p>
+                <p>
+                    0
+                </p>
+
+                <button
+                    type="button"
+                    onclick="openDocuments()"
+                >
+
+                    Open
+
+                </button>
 
             </div>
 
 
+
+            <!-- Borrowed Items -->
+
             <div class="card">
 
-                <h3>🤝 Borrowed Items</h3>
+                <h3>
+                    🤝 Borrowed Items
+                </h3>
 
-                <p>0</p>
+                <p>
+                    0
+                </p>
+
+                <button
+                    type="button"
+                    onclick="openBorrow()"
+                >
+
+                    Open
+
+                </button>
 
             </div>
 
 
+
+            <!-- Warranty -->
+
             <div class="card">
 
-                <h3>🧾 Warranty</h3>
+                <h3>
+                    🧾 Warranty
+                </h3>
 
-                <p>0</p>
+                <p>
+                    0
+                </p>
+
+                <button
+                    type="button"
+                    onclick="openWarranty()"
+                >
+
+                    Open
+
+                </button>
 
             </div>
 
 
+
+            <!-- Reminders -->
+
             <div class="card">
 
-                <h3>🔔 Reminders</h3>
+                <h3>
+                    🔔 Reminders
+                </h3>
 
-                <p>0</p>
+                <p>
+                    0
+                </p>
+
+                <button
+                    type="button"
+                    onclick="openReminders()"
+                >
+
+                    Open
+
+                </button>
 
             </div>
 
         </div>
 
 
+
         <br><br>
 
 
-        <!-- Logout Button -->
+
+        <!-- =========================
+             Logout
+        ========================== -->
 
         <button
             type="button"
             onclick="logout()"
         >
+
             Logout
+
         </button>
+
 
     </div>
 
 
+
     <script>
 
-        // =========================
+
+        // =====================================
         // LOGIN CHECK
-        // =========================
+        // =====================================
 
         const loggedIn =
-            localStorage.getItem("loggedIn");
+            localStorage.getItem(
+                "loggedIn"
+            );
 
 
         if (loggedIn !== "true") {
@@ -104,12 +224,15 @@
         }
 
 
-        // =========================
+
+        // =====================================
         // SHOW USER NAME
-        // =========================
+        // =====================================
 
         const userName =
-            localStorage.getItem("userName");
+            localStorage.getItem(
+                "userName"
+            );
 
 
         if (userName) {
@@ -122,9 +245,75 @@
         }
 
 
-        // =========================
+
+        // =====================================
+        // PROFILE
+        // =====================================
+
+        function openProfile() {
+
+            window.location.href =
+                "profile.html";
+
+        }
+
+
+
+        // =====================================
+        // DOCUMENTS
+        // =====================================
+
+        function openDocuments() {
+
+            window.location.href =
+                "documents.html";
+
+        }
+
+
+
+        // =====================================
+        // BORROW & RETURN
+        // =====================================
+
+        function openBorrow() {
+
+            window.location.href =
+                "borrow-return.html";
+
+        }
+
+
+
+        // =====================================
+        // WARRANTY
+        // =====================================
+
+        function openWarranty() {
+
+            window.location.href =
+                "warranty.html";
+
+        }
+
+
+
+        // =====================================
+        // REMINDERS
+        // =====================================
+
+        function openReminders() {
+
+            window.location.href =
+                "reminders.html";
+
+        }
+
+
+
+        // =====================================
         // LOGOUT
-        // =========================
+        // =====================================
 
         function logout() {
 
@@ -146,7 +335,9 @@
 
         }
 
+
     </script>
+
 
 </body>
 
