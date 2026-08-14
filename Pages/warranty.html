@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Warranty Manager</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🧾 Warranty Manager</h1>
+
+    <p>
+        Keep track of your product warranties.
+    </p>
+
+
+    <div class="card">
+
+        <input
+            id="productName"
+            placeholder="Product Name"
+        >
+
+        <input
+            id="purchaseDate"
+            type="date"
+        >
+
+        <input
+            id="warrantyEnd"
+            type="date"
+        >
+
+        <input
+            id="receiptLocation"
+            placeholder="Receipt Location"
+        >
+
+        <button onclick="addWarranty()">
+            + Add Product
+        </button>
+
+    </div>
+
+
+    <h2>My Products</h2>
+
+    <div id="warrantyList"></div>
+
+
+    <br>
+
+    <button onclick="goDashboard()">
+        ← Dashboard
+    </button>
+
+</div>
+
+
+<script src="../js/common.js"></script>
+<script src="../js/warranty.js"></script>
+
+</body>
+
+</html>
