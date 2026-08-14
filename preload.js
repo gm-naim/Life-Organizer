@@ -1,24 +1,62 @@
-const { contextBridge, ipcRenderer } = require("electron");
+const {
+    contextBridge,
+    ipcRenderer
+} = require("electron");
 
 
-contextBridge.exposeInMainWorld("electronAPI", {
+contextBridge.exposeInMainWorld(
+    "electronAPI",
+    {
 
-    // Get all users
-    getUsers: function() {
-
-        return ipcRenderer.invoke("get-users");
-
-    },
+        getUsers: () =>
+            ipcRenderer.invoke(
+                "get-users"
+            ),
 
 
-    // Save new user
-    saveUser: function(user) {
+        createUser: (user) =>
+            ipcRenderer.invoke(
+                "create-user",
+                user
+            ),
 
-        return ipcRenderer.invoke(
-            "save-user",
+
+        updateUser: (
+            email,
             user
-        );
+        ) =>
+            ipcRenderer.invoke(
+                "update-user",
+                email,
+                user
+            ),
+
+
+        saveUserData: (
+            email,
+            field,
+            value
+        ) =>
+            ipcRenderer.invoke(
+                "save-user-data",
+                email,
+                field,
+                value
+            ),
+
+
+        getUser: (email) =>
+            ipcRenderer.invoke(
+                "get-user",
+                email
+            ),
+
+
+        deleteUser: (email) =>
+            ipcRenderer.invoke(
+                "delete-user",
+                email
+            )
 
     }
-
-});
+);
