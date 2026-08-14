@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Smart Reminders</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🔔 Smart Reminder Center</h1>
+
+    <p>
+        Important things that need your attention.
+    </p>
+
+
+    <div id="smartReminders"></div>
+
+
+    <hr>
+
+
+    <h2>My Reminders</h2>
+
+
+    <div class="card">
+
+        <input
+            id="reminderTitle"
+            placeholder="Reminder Title"
+        >
+
+        <input
+            id="reminderDate"
+            type="date"
+        >
+
+        <button onclick="addReminder()">
+            + Add Reminder
+        </button>
+
+    </div>
+
+
+    <div id="reminderList"></div>
+
+
+    <br>
+
+    <button onclick="goDashboard()">
+        ← Dashboard
+    </button>
+
+</div>
+
+
+<script src="../js/common.js"></script>
+<script src="../js/reminders.js"></script>
+
+</body>
+
+</html>

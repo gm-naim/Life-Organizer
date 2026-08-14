@@ -1,13 +1,11 @@
 {
     "name": "life-organizer",
     "version": "1.0.0",
-    "description": "A Personal Asset & Document Management System",
+    "description": "A simple personal life organizer",
     "main": "main.js",
     "scripts": {
         "start": "electron ."
     },
-    "author": "G.M. Naim",
-    "license": "MIT",
     "devDependencies": {
         "electron": "^37.10.3"
     }

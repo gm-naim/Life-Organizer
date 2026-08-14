@@ -1,24 +1,3 @@
 {
-    "users": [
-        {
-            "name": "abir",
-            "email": "naim12@gmail.com",
-            "password": "naim12@gmail.com"
-        },
-        {
-            "name": "naIM",
-            "email": "naim12@gmail.com",
-            "password": "naim12@gmail.com"
-        },
-        {
-            "name": "bab",
-            "email": "naim111@gmail.com",
-            "password": "naim111@gmail.com"
-        }
-    ],
-    "documents": [],
-    "borrowedItems": [],
-    "warranties": [],
-    "reminders": [],
-    "trash": []
+    "users": []
 }
