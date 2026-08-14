@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Borrow & Return</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🤝 Borrow & Return</h1>
+
+    <div class="card">
+
+        <input
+            id="itemName"
+            placeholder="Item Name"
+        >
+
+        <input
+            id="borrowedTo"
+            placeholder="Borrowed To"
+        >
+
+        <input
+            id="borrowDate"
+            type="date"
+        >
+
+        <input
+            id="returnDate"
+            type="date"
+        >
+
+        <button onclick="addBorrowItem()">
+            + Add Item
+        </button>
+
+    </div>
+
+
+    <h2>Borrowed Items</h2>
+
+    <div id="borrowList"></div>
+
+
+    <br>
+
+    <button onclick="goDashboard()">
+        ← Dashboard
+    </button>
+
+</div>
+
+
+<script src="../js/common.js"></script>
+<script src="../js/borrow-return.js"></script>
+
+</body>
+
+</html>
