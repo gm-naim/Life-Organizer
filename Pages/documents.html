@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Documents - Life Organizer</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📄 Document Manager</h1>
+
+    <p>Keep your important documents organized.</p>
+
+
+    <div class="card">
+
+        <input
+            id="documentName"
+            placeholder="Document Name"
+        >
+
+        <input
+            id="documentCategory"
+            placeholder="Category"
+        >
+
+        <input
+            id="documentLocation"
+            placeholder="Storage Location"
+        >
+
+        <input
+            id="documentExpiry"
+            type="date"
+        >
+
+        <button onclick="addDocument()">
+            + Add Document
+        </button>
+
+    </div>
+
+
+    <h2>My Documents</h2>
+
+    <div id="documentList"></div>
+
+
+    <br>
+
+    <button onclick="goDashboard()">
+        ← Dashboard
+    </button>
+
+</div>
+
+
+<script src="../js/common.js"></script>
+<script src="../js/documents.js"></script>
+
+</body>
+
+</html>
