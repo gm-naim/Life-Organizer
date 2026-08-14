@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -11,10 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        Life Organizer - Profile
-    </title>
-
+    <title>Life Organizer - Profile</title>
 
     <link
         rel="stylesheet"
@@ -29,84 +25,59 @@
 
     <div class="profile-container">
 
+        <h1>My Profile</h1>
 
-        <h1>
-            My Profile
-        </h1>
+        <p>Manage your personal information</p>
 
-
-        <p>
-            Manage your personal information
-        </p>
-
-
-        <!-- =========================
-             Profile Card
-        ========================== -->
 
         <div class="profile-card">
 
 
+            <!-- Profile Icon -->
+
             <div class="profile-icon">
-
                 👤
-
             </div>
 
 
             <!-- Name -->
 
             <h2 id="profileName">
-
                 User Name
-
             </h2>
 
 
             <!-- Email -->
 
             <p id="profileEmail">
-
                 user@email.com
-
             </p>
 
 
             <hr>
 
 
-            <!-- =========================
-                 User Information
-            ========================== -->
-
+            <!-- Name Information -->
 
             <div class="profile-info">
 
-                <strong>
-                    Name
-                </strong>
-
+                <strong>Name</strong>
 
                 <span id="nameText">
-
                     -
-
                 </span>
 
             </div>
 
 
+            <!-- Email Information -->
+
             <div class="profile-info">
 
-                <strong>
-                    Email
-                </strong>
-
+                <strong>Email</strong>
 
                 <span id="emailText">
-
                     -
-
                 </span>
 
             </div>
@@ -115,54 +86,52 @@
             <br>
 
 
-            <!-- =========================
-                 Edit Profile
-            ========================== -->
-
+            <!-- Edit Profile -->
 
             <button
                 type="button"
                 onclick="editProfile()"
             >
-
                 ✏️ Edit Profile
-
             </button>
 
 
             <br><br>
 
 
-            <!-- =========================
-                 Back
-            ========================== -->
+            <!-- Change Password -->
 
+            <button
+                type="button"
+                onclick="changePassword()"
+            >
+                🔐 Change Password
+            </button>
+
+
+            <br><br>
+
+
+            <!-- Back -->
 
             <button
                 type="button"
                 onclick="goBack()"
             >
-
                 ← Back to Dashboard
-
             </button>
 
 
             <br><br>
 
 
-            <!-- =========================
-                 Logout
-            ========================== -->
-
+            <!-- Logout -->
 
             <button
                 type="button"
                 onclick="logout()"
             >
-
                 Logout
-
             </button>
 
 
@@ -180,9 +149,7 @@
         // =====================================
 
         const loggedIn =
-            localStorage.getItem(
-                "loggedIn"
-            );
+            localStorage.getItem("loggedIn");
 
 
         if (loggedIn !== "true") {
@@ -193,21 +160,16 @@
         }
 
 
-
         // =====================================
-        // GET CURRENT USER
+        // CURRENT USER
         // =====================================
 
         let userName =
-            localStorage.getItem(
-                "userName"
-            );
+            localStorage.getItem("userName");
 
 
         let userEmail =
-            localStorage.getItem(
-                "userEmail"
-            );
+            localStorage.getItem("userEmail");
 
 
 
@@ -217,19 +179,16 @@
 
         function showUserInfo() {
 
-
             if (userName) {
 
                 document.getElementById(
                     "profileName"
-                ).textContent =
-                    userName;
+                ).textContent = userName;
 
 
                 document.getElementById(
                     "nameText"
-                ).textContent =
-                    userName;
+                ).textContent = userName;
 
             }
 
@@ -238,14 +197,12 @@
 
                 document.getElementById(
                     "profileEmail"
-                ).textContent =
-                    userEmail;
+                ).textContent = userEmail;
 
 
                 document.getElementById(
                     "emailText"
-                ).textContent =
-                    userEmail;
+                ).textContent = userEmail;
 
             }
 
@@ -262,9 +219,6 @@
 
         async function editProfile() {
 
-
-            // Ask for new name
-
             const newName =
                 prompt(
                     "Enter your new name:",
@@ -272,16 +226,10 @@
                 );
 
 
-            // Cancel
-
             if (newName === null) {
-
                 return;
-
             }
 
-
-            // Ask for new email
 
             const newEmail =
                 prompt(
@@ -290,20 +238,13 @@
                 );
 
 
-            // Cancel
-
             if (newEmail === null) {
-
                 return;
-
             }
 
 
-            // Check empty value
-
             if (
-                newName.trim() === ""
-                ||
+                newName.trim() === "" ||
                 newEmail.trim() === ""
             ) {
 
@@ -316,40 +257,26 @@
             }
 
 
-
-            // =====================================
-            // GET ALL USERS
-            // =====================================
-
             const users =
                 await window.electronAPI.getUsers();
 
 
-
-            // =====================================
-            // CHECK EMAIL
-            // =====================================
-
             const emailExists =
-                users.some(
-                    function(user) {
+                users.some(function(user) {
 
-                        return (
+                    return (
+                        user.email.toLowerCase()
+                        ===
+                        newEmail.trim().toLowerCase()
 
-                            user.email.toLowerCase()
-                            ===
-                            newEmail.trim().toLowerCase()
+                        &&
 
-                            &&
+                        user.email.toLowerCase()
+                        !==
+                        userEmail.toLowerCase()
+                    );
 
-                            user.email.toLowerCase()
-                            !==
-                            userEmail.toLowerCase()
-
-                        );
-
-                    }
-                );
+                });
 
 
             if (emailExists) {
@@ -363,81 +290,46 @@
             }
 
 
-
-            // =====================================
-            // FIND CURRENT USER
-            // =====================================
-
             const currentUser =
-                users.find(
-                    function(user) {
+                users.find(function(user) {
 
-                        return (
+                    return (
+                        user.email.toLowerCase()
+                        ===
+                        userEmail.toLowerCase()
+                    );
 
-                            user.email.toLowerCase()
-                            ===
-                            userEmail.toLowerCase()
-
-                        );
-
-                    }
-                );
+                });
 
 
             if (!currentUser) {
 
-                alert(
-                    "User not found."
-                );
+                alert("User not found.");
 
                 return;
 
             }
 
 
-
-            // =====================================
-            // CREATE UPDATED USER
-            // =====================================
-
             const updatedUser = {
 
-                name:
-                    newName.trim(),
+                name: newName.trim(),
 
-                email:
-                    newEmail.trim(),
+                email: newEmail.trim(),
 
-                password:
-                    currentUser.password
+                password: currentUser.password
 
             };
 
 
-
-            // =====================================
-            // UPDATE DATA.JSON
-            // =====================================
-
             const success =
                 await window.electronAPI.updateUser(
-
                     userEmail,
-
                     updatedUser
-
                 );
 
 
-
-            // =====================================
-            // SUCCESS
-            // =====================================
-
             if (success) {
-
-
-                // Update localStorage
 
                 localStorage.setItem(
                     "userName",
@@ -451,8 +343,6 @@
                 );
 
 
-                // Update variables
-
                 userName =
                     updatedUser.name;
 
@@ -460,8 +350,6 @@
                 userEmail =
                     updatedUser.email;
 
-
-                // Show updated information
 
                 showUserInfo();
 
@@ -472,11 +360,169 @@
 
             }
 
-
             else {
 
                 alert(
                     "Profile update failed."
+                );
+
+            }
+
+        }
+
+
+
+        // =====================================
+        // CHANGE PASSWORD
+        // =====================================
+
+        async function changePassword() {
+
+            const currentPassword =
+                prompt(
+                    "Enter your current password:"
+                );
+
+
+            if (currentPassword === null) {
+                return;
+            }
+
+
+            const newPassword =
+                prompt(
+                    "Enter your new password:"
+                );
+
+
+            if (newPassword === null) {
+                return;
+            }
+
+
+            const confirmPassword =
+                prompt(
+                    "Confirm your new password:"
+                );
+
+
+            if (confirmPassword === null) {
+                return;
+            }
+
+
+            // Empty check
+
+            if (
+                currentPassword.trim() === "" ||
+                newPassword.trim() === "" ||
+                confirmPassword.trim() === ""
+            ) {
+
+                alert(
+                    "Password cannot be empty."
+                );
+
+                return;
+
+            }
+
+
+            // Password match
+
+            if (
+                newPassword !==
+                confirmPassword
+            ) {
+
+                alert(
+                    "New passwords do not match."
+                );
+
+                return;
+
+            }
+
+
+            // Get users
+
+            const users =
+                await window.electronAPI.getUsers();
+
+
+            // Find current user
+
+            const currentUser =
+                users.find(function(user) {
+
+                    return (
+                        user.email.toLowerCase()
+                        ===
+                        userEmail.toLowerCase()
+                    );
+
+                });
+
+
+            if (!currentUser) {
+
+                alert("User not found.");
+
+                return;
+
+            }
+
+
+            // Check old password
+
+            if (
+                currentUser.password !==
+                currentPassword
+            ) {
+
+                alert(
+                    "Current password is incorrect."
+                );
+
+                return;
+
+            }
+
+
+            // New user data
+
+            const updatedUser = {
+
+                name: currentUser.name,
+
+                email: currentUser.email,
+
+                password: newPassword
+
+            };
+
+
+            // Save
+
+            const success =
+                await window.electronAPI.updateUser(
+                    currentUser.email,
+                    updatedUser
+                );
+
+
+            if (success) {
+
+                alert(
+                    "Password changed successfully!"
+                );
+
+            }
+
+            else {
+
+                alert(
+                    "Password change failed."
                 );
 
             }
@@ -503,7 +549,6 @@
         // =====================================
 
         function logout() {
-
 
             localStorage.removeItem(
                 "loggedIn"
