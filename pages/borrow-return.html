@@ -1,69 +1,53 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-    <title>Borrow & Return</title>
-
-    <link
-        rel="stylesheet"
-        href="../css/style.css"
-    >
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Organizer - Borrow & Return</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
 </head>
-
 <body>
+
+<div class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="profile.html">Profile</a>
+    <a href="documents.html">Documents</a>
+    <a href="borrow-return.html">Borrow & Return</a>
+    <a href="warranty.html">Warranty</a>
+    <a href="reminders.html">Reminder</a>
+    <a href="trash.html">Trash</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" onclick="logout()">Logout</a>
+</div>
 
 <div class="container">
 
-    <h1>🤝 Borrow & Return</h1>
+    <h1>Borrow & Return</h1>
 
     <div class="card">
+        <h2>Add Borrowed Item</h2>
 
-        <input
-            id="itemName"
-            placeholder="Item Name"
-        >
+        <label>Item Name</label>
+        <input id="borrowName" placeholder="Calculator">
 
-        <input
-            id="borrowedTo"
-            placeholder="Borrowed To"
-        >
+        <label>Borrowed To</label>
+        <input id="person" placeholder="Rakib">
 
-        <input
-            id="borrowDate"
-            type="date"
-        >
+        <label>Borrow Date</label>
+        <input id="borrowDate" type="date">
 
-        <input
-            id="returnDate"
-            type="date"
-        >
+        <label>Return Date</label>
+        <input id="returnDate" type="date">
 
-        <button onclick="addBorrowItem()">
-            + Add Item
-        </button>
-
+        <button onclick="addBorrow()">Save Item</button>
     </div>
-
-
-    <h2>Borrowed Items</h2>
 
     <div id="borrowList"></div>
 
-
-    <br>
-
-    <button onclick="goDashboard()">
-        ← Dashboard
-    </button>
-
 </div>
-
 
 <script src="../js/common.js"></script>
 <script src="../js/borrow-return.js"></script>
-
 </body>
-
 </html>
