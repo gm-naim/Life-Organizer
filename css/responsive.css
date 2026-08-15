@@ -1,0 +1,14 @@
+@media (max-width: 800px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        margin: 10px;
+    }
+
+    .nav a {
+        display: inline-block;
+        margin: 5px;
+    }
+}
