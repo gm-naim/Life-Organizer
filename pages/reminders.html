@@ -1,71 +1,50 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-    <title>Smart Reminders</title>
-
-    <link
-        rel="stylesheet"
-        href="../css/style.css"
-    >
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Organizer - Reminders</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
 </head>
-
 <body>
+
+<div class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="profile.html">Profile</a>
+    <a href="documents.html">Documents</a>
+    <a href="borrow-return.html">Borrow & Return</a>
+    <a href="warranty.html">Warranty</a>
+    <a href="reminders.html">Reminder</a>
+    <a href="trash.html">Trash</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" onclick="logout()">Logout</a>
+</div>
 
 <div class="container">
 
-    <h1>🔔 Smart Reminder Center</h1>
-
-    <p>
-        Important things that need your attention.
-    </p>
-
-
-    <div id="smartReminders"></div>
-
-
-    <hr>
-
-
-    <h2>My Reminders</h2>
-
+    <h1>Reminder Center</h1>
 
     <div class="card">
+        <h2>Add Reminder</h2>
 
-        <input
-            id="reminderTitle"
-            placeholder="Reminder Title"
-        >
+        <label>Title</label>
+        <input id="title" placeholder="Passport expiry">
 
-        <input
-            id="reminderDate"
-            type="date"
-        >
+        <label>Date</label>
+        <input id="date" type="date">
 
-        <button onclick="addReminder()">
-            + Add Reminder
-        </button>
+        <label>Note</label>
+        <textarea id="note" placeholder="Remember this"></textarea>
 
+        <button onclick="addReminder()">Save Reminder</button>
     </div>
-
 
     <div id="reminderList"></div>
 
-
-    <br>
-
-    <button onclick="goDashboard()">
-        ← Dashboard
-    </button>
-
 </div>
-
 
 <script src="../js/common.js"></script>
 <script src="../js/reminders.js"></script>
-
 </body>
-
 </html>
