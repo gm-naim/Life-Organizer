@@ -2,45 +2,38 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
-// ======================================================
+
+// =====================================================
 // DATA FILE
-// ======================================================
+// =====================================================
 
 const dataFolder = path.join(__dirname, "data");
 const dataFile = path.join(dataFolder, "data.json");
 
 
-// ======================================================
+// =====================================================
 // CREATE DATA FOLDER
-// ======================================================
+// =====================================================
 
 if (!fs.existsSync(dataFolder)) {
     fs.mkdirSync(dataFolder, { recursive: true });
 }
 
 
-// ======================================================
+// =====================================================
+// DEFAULT DATA
+// =====================================================
+
+const defaultData = {
+    users: []
+};
+
+
+// =====================================================
 // CREATE DATA FILE
-// ======================================================
+// =====================================================
 
 if (!fs.existsSync(dataFile)) {
-
-    const defaultData = {
-
-        users: [],
-
-        documents: [],
-
-        borrowItems: [],
-
-        warranties: [],
-
-        reminders: [],
-
-        trash: []
-
-    };
-
     fs.writeFileSync(
         dataFile,
         JSON.stringify(defaultData, null, 2)
@@ -48,53 +41,41 @@ if (!fs.existsSync(dataFile)) {
 }
 
 
-// ======================================================
+// =====================================================
 // READ DATA
-// ======================================================
+// =====================================================
 
 function readData() {
 
     try {
 
-        const fileData =
-            fs.readFileSync(
-                dataFile,
-                "utf-8"
-            );
+        const text = fs.readFileSync(
+            dataFile,
+            "utf-8"
+        );
 
-        return JSON.parse(fileData);
+        const data = JSON.parse(text);
+
+        if (!data.users) {
+            data.users = [];
+        }
+
+        return data;
 
     } catch (error) {
 
-        console.log(
-            "Error reading data:",
-            error
-        );
+        console.log("Data read error:", error);
 
         return {
-
-            users: [],
-
-            documents: [],
-
-            borrowItems: [],
-
-            warranties: [],
-
-            reminders: [],
-
-            trash: []
-
+            users: []
         };
-
     }
-
 }
 
 
-// ======================================================
+// =====================================================
 // SAVE DATA
-// ======================================================
+// =====================================================
 
 function saveData(data) {
 
@@ -109,32 +90,25 @@ function saveData(data) {
 
     } catch (error) {
 
-        console.log(
-            "Error saving data:",
-            error
-        );
+        console.log("Data save error:", error);
 
         return false;
-
     }
-
 }
 
 
-// ======================================================
-// CREATE ELECTRON WINDOW
-// ======================================================
+// =====================================================
+// CREATE WINDOW
+// =====================================================
 
 function createWindow() {
 
     const win = new BrowserWindow({
 
         width: 1200,
-
         height: 800,
 
         minWidth: 900,
-
         minHeight: 600,
 
         webPreferences: {
@@ -145,17 +119,10 @@ function createWindow() {
             ),
 
             contextIsolation: true,
-
             nodeIntegration: false
-
         }
-
     });
 
-
-    // ==============================================
-    // LOAD LOGIN PAGE
-    // ==============================================
 
     win.loadFile(
         path.join(
@@ -164,69 +131,44 @@ function createWindow() {
             "login.html"
         )
     );
-
-
-    // ==============================================
-    // OPTIONAL DEVTOOLS
-    // ==============================================
-
-    // win.webContents.openDevTools();
-
 }
 
 
-// ======================================================
+// =====================================================
 // APP READY
-// ======================================================
+// =====================================================
 
 app.whenReady().then(() => {
 
     createWindow();
 
+    app.on("activate", () => {
 
-    app.on(
-        "activate",
-        () => {
+        if (
+            BrowserWindow.getAllWindows().length === 0
+        ) {
 
-            if (
-                BrowserWindow
-                    .getAllWindows()
-                    .length === 0
-            ) {
-
-                createWindow();
-
-            }
-
+            createWindow();
         }
-    );
-
+    });
 });
 
 
-// ======================================================
+// =====================================================
 // CLOSE APP
-// ======================================================
+// =====================================================
 
-app.on(
-    "window-all-closed",
-    () => {
+app.on("window-all-closed", () => {
 
-        if (
-            process.platform !== "darwin"
-        ) {
-
-            app.quit();
-
-        }
-
+    if (process.platform !== "darwin") {
+        app.quit();
     }
-);
+});
 
 
-// ======================================================
+// =====================================================
 // GET ALL USERS
-// ======================================================
+// =====================================================
 
 ipcMain.handle(
     "get-users",
@@ -234,120 +176,258 @@ ipcMain.handle(
 
         const data = readData();
 
-        return data.users || [];
-
+        return data.users;
     }
 );
 
 
-// ======================================================
-// SAVE NEW USER
-// ======================================================
+// =====================================================
+// CREATE USER
+// =====================================================
+
+ipcMain.handle(
+    "create-user",
+    (event, user) => {
+
+        return createUser(user);
+    }
+);
+
+
+// =====================================================
+// SAVE USER
+// =====================================================
 
 ipcMain.handle(
     "save-user",
     (event, user) => {
 
-        const data = readData();
-
-
-        if (!user) {
-
-            return {
-
-                success: false,
-
-                message: "Invalid user data."
-
-            };
-
-        }
-
-
-        if (
-            !user.name ||
-            !user.email ||
-            !user.password
-        ) {
-
-            return {
-
-                success: false,
-
-                message: "All fields are required."
-
-            };
-
-        }
-
-
-        // ==========================================
-        // CHECK DUPLICATE EMAIL
-        // ==========================================
-
-        const emailExists =
-            data.users.some(
-                existingUser =>
-
-                    existingUser.email
-                        .toLowerCase()
-                    ===
-                    user.email
-                        .toLowerCase()
-            );
-
-
-        if (emailExists) {
-
-            return {
-
-                success: false,
-
-                message:
-                    "This email is already registered."
-
-            };
-
-        }
-
-
-        // ==========================================
-        // ADD USER
-        // ==========================================
-
-        data.users.push({
-
-            name:
-                user.name.trim(),
-
-            email:
-                user.email.trim(),
-
-            password:
-                user.password
-
-        });
-
-
-        saveData(data);
-
-
-        return {
-
-            success: true,
-
-            message:
-                "Account created successfully."
-
-        };
-
+        return createUser(user);
     }
 );
 
 
-// ======================================================
+// =====================================================
+// CREATE USER FUNCTION
+// =====================================================
+
+function createUser(user) {
+
+    const data = readData();
+
+
+    if (!user) {
+
+        return {
+            success: false,
+            message: "Invalid user data."
+        };
+    }
+
+
+    const name =
+        String(user.name || "").trim();
+
+    const email =
+        String(user.email || "").trim();
+
+    const password =
+        String(user.password || "");
+
+
+    if (!name || !email || !password) {
+
+        return {
+            success: false,
+            message: "All fields are required."
+        };
+    }
+
+
+    // ================================================
+    // CHECK DUPLICATE EMAIL
+    // ================================================
+
+    const exists = data.users.some(
+        existingUser =>
+
+            String(existingUser.email)
+                .toLowerCase()
+            ===
+            email.toLowerCase()
+    );
+
+
+    if (exists) {
+
+        return {
+            success: false,
+            message:
+                "This email is already registered."
+        };
+    }
+
+
+    // ================================================
+    // CREATE USER
+    // ================================================
+
+    const newUser = {
+
+        name: name,
+
+        email: email,
+
+        password: password,
+
+        documents: [],
+
+        borrowItems: [],
+
+        warranties: [],
+
+        reminders: [],
+
+        trash: []
+    };
+
+
+    data.users.push(newUser);
+
+
+    const saved = saveData(data);
+
+
+    if (!saved) {
+
+        return {
+            success: false,
+            message: "Could not save account."
+        };
+    }
+
+
+    return {
+        success: true,
+        message: "Account created successfully."
+    };
+}
+
+
+// =====================================================
+// GET ONE USER
+// =====================================================
+
+ipcMain.handle(
+    "get-user",
+    (event, email) => {
+
+        const data = readData();
+
+
+        if (!email) {
+            return null;
+        }
+
+
+        const user = data.users.find(
+            item =>
+
+                String(item.email)
+                    .toLowerCase()
+                ===
+                String(email)
+                    .toLowerCase()
+        );
+
+
+        if (!user) {
+            return null;
+        }
+
+
+        // Make sure old accounts also have these
+
+        if (!user.documents) {
+            user.documents = [];
+        }
+
+        if (!user.borrowItems) {
+            user.borrowItems = [];
+        }
+
+        if (!user.warranties) {
+            user.warranties = [];
+        }
+
+        if (!user.reminders) {
+            user.reminders = [];
+        }
+
+        if (!user.trash) {
+            user.trash = [];
+        }
+
+
+        return user;
+    }
+);
+
+
+// =====================================================
+// SAVE USER FIELD
+// =====================================================
+
+ipcMain.handle(
+    "save-user-data",
+    (event, email, field, value) => {
+
+        const data = readData();
+
+
+        const userIndex = data.users.findIndex(
+            user =>
+
+                String(user.email)
+                    .toLowerCase()
+                ===
+                String(email)
+                    .toLowerCase()
+        );
+
+
+        if (userIndex === -1) {
+            return false;
+        }
+
+
+        const allowedFields = [
+
+            "documents",
+            "borrowItems",
+            "warranties",
+            "reminders",
+            "trash"
+
+        ];
+
+
+        if (!allowedFields.includes(field)) {
+            return false;
+        }
+
+
+        data.users[userIndex][field] = value;
+
+
+        return saveData(data);
+    }
+);
+
+
+// =====================================================
 // UPDATE USER
-// ======================================================
+// =====================================================
 
 ipcMain.handle(
     "update-user",
@@ -356,44 +436,27 @@ ipcMain.handle(
         const data = readData();
 
 
-        if (
-            !oldEmail ||
-            !updatedUser
-        ) {
+        const userIndex = data.users.findIndex(
+            user =>
 
-            return false;
-
-        }
-
-
-        // ==========================================
-        // FIND USER
-        // ==========================================
-
-        const userIndex =
-            data.users.findIndex(
-                user =>
-
-                    user.email
-                        .toLowerCase()
-                    ===
-                    oldEmail
-                        .toLowerCase()
-            );
+                String(user.email)
+                    .toLowerCase()
+                ===
+                String(oldEmail)
+                    .toLowerCase()
+        );
 
 
         if (userIndex === -1) {
-
             return false;
-
         }
 
 
-        // ==========================================
-        // CHECK NEW EMAIL
-        // ==========================================
+        // ==============================================
+        // CHECK EMAIL DUPLICATE
+        // ==============================================
 
-        const emailAlreadyUsed =
+        const duplicateEmail =
             data.users.some(
                 (user, index) => {
 
@@ -403,28 +466,29 @@ ipcMain.handle(
 
                         &&
 
-                        user.email
+                        String(user.email)
                             .toLowerCase()
                         ===
-                        updatedUser.email
+                        String(updatedUser.email)
                             .toLowerCase()
 
                     );
-
                 }
             );
 
 
-        if (emailAlreadyUsed) {
-
+        if (duplicateEmail) {
             return false;
-
         }
 
 
-        // ==========================================
-        // UPDATE USER
-        // ==========================================
+        // ==============================================
+        // KEEP EXISTING FEATURE DATA
+        // ==============================================
+
+        const oldUser =
+            data.users[userIndex];
+
 
         data.users[userIndex] = {
 
@@ -435,401 +499,96 @@ ipcMain.handle(
                 updatedUser.email,
 
             password:
-                updatedUser.password
+                updatedUser.password,
 
+            documents:
+                oldUser.documents || [],
+
+            borrowItems:
+                oldUser.borrowItems || [],
+
+            warranties:
+                oldUser.warranties || [],
+
+            reminders:
+                oldUser.reminders || [],
+
+            trash:
+                oldUser.trash || []
         };
 
 
-        saveData(data);
-
-
-        return true;
-
+        return saveData(data);
     }
 );
 
 
-// ======================================================
-// GET ALL DATA
-// ======================================================
+// =====================================================
+// DELETE USER
+// =====================================================
+
+ipcMain.handle(
+    "delete-user",
+    (event, email) => {
+
+        const data = readData();
+
+
+        const oldLength =
+            data.users.length;
+
+
+        data.users =
+            data.users.filter(
+                user =>
+
+                    String(user.email)
+                        .toLowerCase()
+                    !==
+                    String(email)
+                        .toLowerCase()
+            );
+
+
+        if (
+            data.users.length === oldLength
+        ) {
+
+            return false;
+        }
+
+
+        return saveData(data);
+    }
+);
+
+
+// =====================================================
+// GET COMPLETE DATA
+// =====================================================
 
 ipcMain.handle(
     "get-data",
     () => {
 
         return readData();
-
     }
 );
 
 
-// ======================================================
-// SAVE ALL DATA
-// ======================================================
+// =====================================================
+// SAVE COMPLETE DATA
+// =====================================================
 
 ipcMain.handle(
     "save-data",
-    (event, newData) => {
+    (event, data) => {
 
-        if (!newData) {
-
-            return false;
-
-        }
-
-
-        return saveData(newData);
-
+        return saveData(data);
     }
 );
 
-
-// ======================================================
-// ADD DOCUMENT
-// ======================================================
-
-ipcMain.handle(
-    "add-document",
-    (event, document) => {
-
-        const data = readData();
-
-
-        if (!data.documents) {
-
-            data.documents = [];
-
-        }
-
-
-        data.documents.push(document);
-
-
-        saveData(data);
-
-
-        return true;
-
-    }
-);
-
-
-// ======================================================
-// ADD BORROW ITEM
-// ======================================================
-
-ipcMain.handle(
-    "add-borrow-item",
-    (event, item) => {
-
-        const data = readData();
-
-
-        if (!data.borrowItems) {
-
-            data.borrowItems = [];
-
-        }
-
-
-        data.borrowItems.push(item);
-
-
-        saveData(data);
-
-
-        return true;
-
-    }
-);
-
-
-// ======================================================
-// ADD WARRANTY
-// ======================================================
-
-ipcMain.handle(
-    "add-warranty",
-    (event, warranty) => {
-
-        const data = readData();
-
-
-        if (!data.warranties) {
-
-            data.warranties = [];
-
-        }
-
-
-        data.warranties.push(warranty);
-
-
-        saveData(data);
-
-
-        return true;
-
-    }
-);
-
-
-// ======================================================
-// ADD REMINDER
-// ======================================================
-
-ipcMain.handle(
-    "add-reminder",
-    (event, reminder) => {
-
-        const data = readData();
-
-
-        if (!data.reminders) {
-
-            data.reminders = [];
-
-        }
-
-
-        data.reminders.push(reminder);
-
-
-        saveData(data);
-
-
-        return true;
-
-    }
-);
-
-
-// ======================================================
-// DELETE DOCUMENT
-// ======================================================
-
-ipcMain.handle(
-    "delete-document",
-    (event, id) => {
-
-        const data = readData();
-
-
-        const document =
-            data.documents.find(
-                item => item.id === id
-            );
-
-
-        if (document) {
-
-            if (!data.trash) {
-
-                data.trash = [];
-
-            }
-
-
-            data.trash.push({
-
-                type: "document",
-
-                item: document
-
-            });
-
-        }
-
-
-        data.documents =
-            data.documents.filter(
-                item => item.id !== id
-            );
-
-
-        saveData(data);
-
-
-        return true;
-
-    }
-);
-
-
-// ======================================================
-// DELETE BORROW ITEM
-// ======================================================
-
-ipcMain.handle(
-    "delete-borrow-item",
-    (event, id) => {
-
-        const data = readData();
-
-
-        const item =
-            data.borrowItems.find(
-                item => item.id === id
-            );
-
-
-        if (item) {
-
-            if (!data.trash) {
-
-                data.trash = [];
-
-            }
-
-
-            data.trash.push({
-
-                type: "borrow",
-
-                item: item
-
-            });
-
-        }
-
-
-        data.borrowItems =
-            data.borrowItems.filter(
-                item => item.id !== id
-            );
-
-
-        saveData(data);
-
-
-        return true;
-
-    }
-);
-
-
-// ======================================================
-// DELETE WARRANTY
-// ======================================================
-
-ipcMain.handle(
-    "delete-warranty",
-    (event, id) => {
-
-        const data = readData();
-
-
-        const warranty =
-            data.warranties.find(
-                item => item.id === id
-            );
-
-
-        if (warranty) {
-
-            if (!data.trash) {
-
-                data.trash = [];
-
-            }
-
-
-            data.trash.push({
-
-                type: "warranty",
-
-                item: warranty
-
-            });
-
-        }
-
-
-        data.warranties =
-            data.warranties.filter(
-                item => item.id !== id
-            );
-
-
-        saveData(data);
-
-
-        return true;
-
-    }
-);
-
-
-// ======================================================
-// DELETE REMINDER
-// ======================================================
-
-ipcMain.handle(
-    "delete-reminder",
-    (event, id) => {
-
-        const data = readData();
-
-
-        const reminder =
-            data.reminders.find(
-                item => item.id === id
-            );
-
-
-        if (reminder) {
-
-            if (!data.trash) {
-
-                data.trash = [];
-
-            }
-
-
-            data.trash.push({
-
-                type: "reminder",
-
-                item: reminder
-
-            });
-
-        }
-
-
-        data.reminders =
-            data.reminders.filter(
-                item => item.id !== id
-            );
-
-
-        saveData(data);
-
-
-        return true;
-
-    }
-);
-
-
-// ======================================================
-// UPDATE GENERAL DATA
-// ======================================================
-
-ipcMain.handle(
-    "update-data",
-    (event, newData) => {
-
-        return saveData(newData);
-
-    }
-);
-
-
-// ======================================================
-// FINISHED
-// ======================================================
 
 console.log(
-    "Life Organizer is running..."
+    "Life Organizer started successfully."
 );
