@@ -1,0 +1,23 @@
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-card {
+    width: 380px;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+}
+
+.auth-card h1 {
+    color: #2563eb;
+}
+
+.message {
+    min-height: 20px;
+    margin-top: 10px;
+}

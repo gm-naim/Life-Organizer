@@ -1,3 +1,11 @@
 {
-    "users": []
+  "users": [],
+  "documents": [],
+  "borrowItems": [],
+  "warranties": [],
+  "reminders": [],
+  "trash": [],
+  "settings": {
+    "darkMode": false
+  }
 }
