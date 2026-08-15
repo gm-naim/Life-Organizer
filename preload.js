@@ -1,62 +1,21 @@
-const {
-    contextBridge,
-    ipcRenderer
-} = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
 
+contextBridge.exposeInMainWorld("electronAPI", {
+    getUsers: () => ipcRenderer.invoke("get-users"),
+    saveUser: user => ipcRenderer.invoke("save-user", user),
+    getUser: email => ipcRenderer.invoke("get-user", email),
+    updateUser: (oldEmail, user) =>
+        ipcRenderer.invoke("update-user", oldEmail, user),
 
-contextBridge.exposeInMainWorld(
-    "electronAPI",
-    {
+    getData: () => ipcRenderer.invoke("get-data"),
+    saveData: data => ipcRenderer.invoke("save-data", data),
 
-        getUsers: () =>
-            ipcRenderer.invoke(
-                "get-users"
-            ),
+    addItem: (type, item) => ipcRenderer.invoke("add-item", type, item),
+    updateItem: (type, id, item) =>
+        ipcRenderer.invoke("update-item", type, id, item),
+    deleteItem: (type, id) =>
+        ipcRenderer.invoke("delete-item", type, id),
 
-
-        createUser: (user) =>
-            ipcRenderer.invoke(
-                "create-user",
-                user
-            ),
-
-
-        updateUser: (
-            email,
-            user
-        ) =>
-            ipcRenderer.invoke(
-                "update-user",
-                email,
-                user
-            ),
-
-
-        saveUserData: (
-            email,
-            field,
-            value
-        ) =>
-            ipcRenderer.invoke(
-                "save-user-data",
-                email,
-                field,
-                value
-            ),
-
-
-        getUser: (email) =>
-            ipcRenderer.invoke(
-                "get-user",
-                email
-            ),
-
-
-        deleteUser: (email) =>
-            ipcRenderer.invoke(
-                "delete-user",
-                email
-            )
-
-    }
-);
+    restoreTrash: id => ipcRenderer.invoke("restore-trash", id),
+    deleteTrash: id => ipcRenderer.invoke("delete-trash", id)
+});
