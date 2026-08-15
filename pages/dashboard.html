@@ -1,344 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life Organizer - Dashboard</title>
-
-    <link
-        rel="stylesheet"
-        href="../css/style.css"
-    >
-
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
 </head>
-
-
 <body>
 
+<div class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="profile.html">Profile</a>
+    <a href="documents.html">Documents</a>
+    <a href="borrow-return.html">Borrow & Return</a>
+    <a href="warranty.html">Warranty</a>
+    <a href="reminders.html">Reminder</a>
+    <a href="trash.html">Trash</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" onclick="logout()">Logout</a>
+</div>
 
-    <div class="dashboard">
+<div class="container">
 
-
-        <!-- =========================
-             Header
-        ========================== -->
-
-        <div class="dashboard-header">
-
-            <div>
-
-                <h1>
-                    Life Organizer
-                </h1>
-
-                <p>
-                    Keep Everything That Matters
-                </p>
-
-            </div>
-
-
-            <!-- Profile Button -->
-
-            <button
-                type="button"
-                onclick="openProfile()"
-            >
-
-                👤 Profile
-
-            </button>
-
+    <div class="dashboard-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p id="welcome"></p>
         </div>
-
-
-
-        <!-- =========================
-             Welcome
-        ========================== -->
-
-        <h2 id="welcomeName">
-
-            Welcome!
-
-        </h2>
-
-
-
-        <!-- =========================
-             Dashboard Cards
-        ========================== -->
-
-        <div class="dashboard-cards">
-
-
-            <!-- Documents -->
-
-            <div class="card">
-
-                <h3>
-                    📄 Documents
-                </h3>
-
-                <p>
-                    0
-                </p>
-
-                <button
-                    type="button"
-                    onclick="openDocuments()"
-                >
-
-                    Open
-
-                </button>
-
-            </div>
-
-
-
-            <!-- Borrowed Items -->
-
-            <div class="card">
-
-                <h3>
-                    🤝 Borrowed Items
-                </h3>
-
-                <p>
-                    0
-                </p>
-
-                <button
-                    type="button"
-                    onclick="openBorrow()"
-                >
-
-                    Open
-
-                </button>
-
-            </div>
-
-
-
-            <!-- Warranty -->
-
-            <div class="card">
-
-                <h3>
-                    🧾 Warranty
-                </h3>
-
-                <p>
-                    0
-                </p>
-
-                <button
-                    type="button"
-                    onclick="openWarranty()"
-                >
-
-                    Open
-
-                </button>
-
-            </div>
-
-
-
-            <!-- Reminders -->
-
-            <div class="card">
-
-                <h3>
-                    🔔 Reminders
-                </h3>
-
-                <p>
-                    0
-                </p>
-
-                <button
-                    type="button"
-                    onclick="openReminders()"
-                >
-
-                    Open
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-
-        <br><br>
-
-
-
-        <!-- =========================
-             Logout
-        ========================== -->
-
-        <button
-            type="button"
-            onclick="logout()"
-        >
-
-            Logout
-
-        </button>
-
-
     </div>
 
+    <div class="grid">
+        <div class="stat">
+            <h3>Documents</h3>
+            <h2 id="documentCount">0</h2>
+        </div>
 
+        <div class="stat">
+            <h3>Borrowed Items</h3>
+            <h2 id="borrowCount">0</h2>
+        </div>
 
-    <script>
+        <div class="stat">
+            <h3>Pending Returns</h3>
+            <h2 id="pendingCount">0</h2>
+        </div>
 
+        <div class="stat">
+            <h3>Products</h3>
+            <h2 id="productCount">0</h2>
+        </div>
 
-        // =====================================
-        // LOGIN CHECK
-        // =====================================
+        <div class="stat">
+            <h3>Reminders</h3>
+            <h2 id="reminderCount">0</h2>
+        </div>
+    </div>
 
-        const loggedIn =
-            localStorage.getItem(
-                "loggedIn"
-            );
+    <div class="card">
+        <h2>Quick Actions</h2>
+        <button onclick="goTo('documents.html')">Add Document</button>
+        <button onclick="goTo('borrow-return.html')">Add Borrow Item</button>
+        <button onclick="goTo('warranty.html')">Add Warranty</button>
+        <button onclick="goTo('reminders.html')">Add Reminder</button>
+    </div>
 
+</div>
 
-        if (loggedIn !== "true") {
-
-            window.location.href =
-                "login.html";
-
-        }
-
-
-
-        // =====================================
-        // SHOW USER NAME
-        // =====================================
-
-        const userName =
-            localStorage.getItem(
-                "userName"
-            );
-
-
-        if (userName) {
-
-            document.getElementById(
-                "welcomeName"
-            ).textContent =
-                "Welcome, " + userName + "!";
-
-        }
-
-
-
-        // =====================================
-        // PROFILE
-        // =====================================
-
-        function openProfile() {
-
-            window.location.href =
-                "profile.html";
-
-        }
-
-
-
-        // =====================================
-        // DOCUMENTS
-        // =====================================
-
-        function openDocuments() {
-
-            window.location.href =
-                "documents.html";
-
-        }
-
-
-
-        // =====================================
-        // BORROW & RETURN
-        // =====================================
-
-        function openBorrow() {
-
-            window.location.href =
-                "borrow-return.html";
-
-        }
-
-
-
-        // =====================================
-        // WARRANTY
-        // =====================================
-
-        function openWarranty() {
-
-            window.location.href =
-                "warranty.html";
-
-        }
-
-
-
-        // =====================================
-        // REMINDERS
-        // =====================================
-
-        function openReminders() {
-
-            window.location.href =
-                "reminders.html";
-
-        }
-
-
-
-        // =====================================
-        // LOGOUT
-        // =====================================
-
-        function logout() {
-
-            localStorage.removeItem(
-                "loggedIn"
-            );
-
-            localStorage.removeItem(
-                "userName"
-            );
-
-            localStorage.removeItem(
-                "userEmail"
-            );
-
-
-            window.location.href =
-                "login.html";
-
-        }
-
-
-    </script>
-
-
+<script src="../js/common.js"></script>
+<script src="../js/dashboard.js"></script>
 </body>
-
 </html>
