@@ -1,72 +1,58 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-    <title>Documents - Life Organizer</title>
-
-    <link
-        rel="stylesheet"
-        href="../css/style.css"
-    >
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Organizer - Documents</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
 </head>
-
 <body>
+
+<div class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="profile.html">Profile</a>
+    <a href="documents.html">Documents</a>
+    <a href="borrow-return.html">Borrow & Return</a>
+    <a href="warranty.html">Warranty</a>
+    <a href="reminders.html">Reminder</a>
+    <a href="trash.html">Trash</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" onclick="logout()">Logout</a>
+</div>
 
 <div class="container">
 
-    <h1>📄 Document Manager</h1>
-
-    <p>Keep your important documents organized.</p>
-
+    <h1>Document Manager</h1>
 
     <div class="card">
+        <h2>Add Document</h2>
 
-        <input
-            id="documentName"
-            placeholder="Document Name"
-        >
+        <label>Document Name</label>
+        <input id="docName" placeholder="Passport">
 
-        <input
-            id="documentCategory"
-            placeholder="Category"
-        >
+        <label>Category</label>
+        <input id="docCategory" placeholder="Personal">
 
-        <input
-            id="documentLocation"
-            placeholder="Storage Location"
-        >
+        <label>Storage Location</label>
+        <input id="docLocation" placeholder="Locker">
 
-        <input
-            id="documentExpiry"
-            type="date"
-        >
+        <label>Expiry Date</label>
+        <input id="docExpiry" type="date">
 
-        <button onclick="addDocument()">
-            + Add Document
-        </button>
-
+        <button onclick="addDocument()">Save Document</button>
     </div>
 
-
-    <h2>My Documents</h2>
+    <div class="card">
+        <h2>Search</h2>
+        <input id="search" oninput="searchDocuments()" placeholder="Search documents">
+    </div>
 
     <div id="documentList"></div>
 
-
-    <br>
-
-    <button onclick="goDashboard()">
-        ← Dashboard
-    </button>
-
 </div>
-
 
 <script src="../js/common.js"></script>
 <script src="../js/documents.js"></script>
-
 </body>
-
 </html>
