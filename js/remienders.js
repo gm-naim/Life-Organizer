@@ -1,386 +1,82 @@
-let reminders = [];
-
-let currentUser = null;
-
-
-// =================================
-// LOAD
-// =================================
+checkLogin();
 
 async function loadReminders() {
-
-    currentUser =
-        await getCurrentUser();
-
-
-    if (!currentUser) {
-        return;
-    }
-
-
-    reminders =
-        currentUser.reminders || [];
-
-
-    showSmartReminders();
-
-    showReminders();
-
-}
-
-
-// =================================
-// SMART REMINDERS
-// =================================
-
-function showSmartReminders() {
-
-    const box =
-        document.getElementById(
-            "smartReminders"
-        );
-
-
-    box.innerHTML = "";
-
-
-    // ==============================
-    // DOCUMENT EXPIRY
-    // ==============================
-
-    const documents =
-        currentUser.documents || [];
-
-
-    documents.forEach(
-        function(item) {
-
-            if (!item.expiry) {
-                return;
-            }
-
-
-            const days =
-                getDaysLeft(
-                    item.expiry
-                );
-
-
-            if (
-                days >= 0 &&
-                days <= 30
-            ) {
-
-                addSmartCard(
-                    box,
-                    "⚠️",
-                    `Document "${item.name}" expires in ${days} days.`
-                );
-
-            }
-
-        }
-    );
-
-
-    // ==============================
-    // WARRANTY
-    // ==============================
-
-    const warranties =
-        currentUser.warranties || [];
-
-
-    warranties.forEach(
-        function(item) {
-
-            if (!item.warrantyEnd) {
-                return;
-            }
-
-
-            const days =
-                getDaysLeft(
-                    item.warrantyEnd
-                );
-
-
-            if (
-                days >= 0 &&
-                days <= 30
-            ) {
-
-                addSmartCard(
-                    box,
-                    "🧾",
-                    `Warranty of "${item.productName}" expires in ${days} days.`
-                );
-
-            }
-
-        }
-    );
-
-
-    // ==============================
-    // BORROW
-    // ==============================
-
-    const borrowItems =
-        currentUser.borrowItems || [];
-
-
-    borrowItems.forEach(
-        function(item) {
-
-            if (
-                item.status ===
-                "Pending"
-            ) {
-
-                addSmartCard(
-                    box,
-                    "🤝",
-                    `${item.name} is still with ${item.borrowedTo}.`
-                );
-
-            }
-
-        }
-    );
-
-
-    if (box.innerHTML === "") {
-
-        box.innerHTML =
-            `<div class="card">
-                ✅ No urgent reminders.
-            </div>`;
-
-    }
-
-}
-
-
-// =================================
-// SMART CARD
-// =================================
-
-function addSmartCard(
-    box,
-    icon,
-    text
-) {
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.className =
-        "card";
-
-
-    div.innerHTML = `
-
-        <h3>
-            ${icon} ${text}
-        </h3>
-
-    `;
-
-
-    box.appendChild(div);
-
-}
-
-
-// =================================
-// DAYS LEFT
-// =================================
-
-function getDaysLeft(
-    dateString
-) {
-
-    const today =
-        new Date();
-
-
-    const date =
-        new Date(dateString);
-
-
-    const difference =
-        date - today;
-
-
-    return Math.ceil(
-        difference /
-        (1000 * 60 * 60 * 24)
-    );
-
-}
-
-
-// =================================
-// NORMAL REMINDERS
-// =================================
-
-function showReminders() {
-
-    const list =
-        document.getElementById(
-            "reminderList"
-        );
-
-
-    list.innerHTML = "";
-
-
-    if (reminders.length === 0) {
-
-        list.innerHTML =
-            "<p>No personal reminders.</p>";
-
-        return;
-    }
-
-
-    reminders.forEach(
-        function(item, index) {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "card";
-
-
-            div.innerHTML = `
-
-                <h3>
-                    🔔 ${item.title}
-                </h3>
-
-                <p>
-                    Date:
-                    ${item.date}
-                </p>
-
-                <button
-                    onclick="deleteReminder(${index})"
-                >
-                    🗑 Delete
-                </button>
-
-            `;
-
-
-            list.appendChild(div);
-
-        }
-    );
-
-}
-
-
-// =================================
-// ADD REMINDER
-// =================================
-
-async function addReminder() {
-
-    const title =
-        document.getElementById(
-            "reminderTitle"
-        ).value.trim();
-
-
-    const date =
-        document.getElementById(
-            "reminderDate"
-        ).value;
-
-
-    if (!title || !date) {
-
-        alert(
-            "Please enter reminder title and date."
-        );
-
-        return;
-    }
-
-
-    reminders.push({
-
-        id: Date.now(),
-
-        title,
-
-        date
-
+    const data = await getProjectData();
+    const email = getCurrentUser();
+
+    const items = data.reminders.filter(function (item) {
+        return item.userEmail === email;
     });
 
+    const area = document.getElementById("reminderList");
+    area.innerHTML = "";
 
-    await saveField(
-        "reminders",
-        reminders
-    );
+    if (items.length === 0) {
+        area.innerHTML = "<p>No reminders yet.</p>";
+        return;
+    }
 
-
-    document.getElementById(
-        "reminderTitle"
-    ).value = "";
-
-
-    document.getElementById(
-        "reminderDate"
-    ).value = "";
-
-
-    showReminders();
-
+    items.forEach(function (item) {
+        area.innerHTML += `
+            <div class="item">
+                <h3>${escapeText(item.title)}</h3>
+                <p>Date: ${escapeText(item.date)}</p>
+                <p>${escapeText(item.note)}</p>
+                <button onclick="deleteReminder('${item.id}')">Delete</button>
+            </div>
+        `;
+    });
 }
 
+async function addReminder() {
+    const title = document.getElementById("title").value.trim();
+    const date = document.getElementById("date").value;
+    const note = document.getElementById("note").value.trim();
 
-// =================================
-// DELETE
-// =================================
+    if (title === "") {
+        alert("Enter reminder title.");
+        return;
+    }
 
-async function deleteReminder(index) {
+    const data = await getProjectData();
 
-    reminders.splice(
-        index,
-        1
-    );
+    data.reminders.push({
+        id: makeId(),
+        userEmail: getCurrentUser(),
+        title: title,
+        date: date,
+        note: note
+    });
 
+    await saveProjectData(data);
 
-    await saveField(
-        "reminders",
-        reminders
-    );
+    document.getElementById("title").value = "";
+    document.getElementById("date").value = "";
+    document.getElementById("note").value = "";
 
-
-    showReminders();
-
+    loadReminders();
 }
 
+async function deleteReminder(id) {
+    const data = await getProjectData();
+    const email = getCurrentUser();
 
-// =================================
-// DASHBOARD
-// =================================
+    const index = data.reminders.findIndex(function (item) {
+        return item.id === id && item.userEmail === email;
+    });
 
-function goDashboard() {
+    if (index === -1) return;
 
-    window.location.href =
-        "dashboard.html";
+    const item = data.reminders.splice(index, 1)[0];
+
+    data.trash.push({
+        type: "Reminder",
+        userEmail: email,
+        item: item
+    });
+
+    await saveProjectData(data);
+    loadReminders();
 }
-
 
 loadReminders();
