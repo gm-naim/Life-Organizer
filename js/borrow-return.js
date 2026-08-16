@@ -1,240 +1,107 @@
-let borrowItems = [];
-
-
-// =================================
-// LOAD
-// =================================
+checkLogin();
 
 async function loadBorrowItems() {
+    const data = await getProjectData();
+    const email = getCurrentUser();
 
-    const user =
-        await getCurrentUser();
-
-    if (!user) {
-        return;
-    }
-
-    borrowItems =
-        user.borrowItems || [];
-
-    showBorrowItems();
-}
-
-
-// =================================
-// SHOW
-// =================================
-
-function showBorrowItems() {
-
-    const list =
-        document.getElementById(
-            "borrowList"
-        );
-
-    list.innerHTML = "";
-
-
-    if (borrowItems.length === 0) {
-
-        list.innerHTML =
-            "<p>No borrowed items.</p>";
-
-        return;
-    }
-
-
-    borrowItems.forEach(
-        function(item, index) {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className = "card";
-
-
-            div.innerHTML = `
-
-                <h3>🤝 ${item.name}</h3>
-
-                <p>
-                    Borrowed To:
-                    ${item.borrowedTo}
-                </p>
-
-                <p>
-                    Borrow Date:
-                    ${item.borrowDate}
-                </p>
-
-                <p>
-                    Return Date:
-                    ${item.returnDate || "Not set"}
-                </p>
-
-                <p>
-                    Status:
-                    <strong>
-                        ${item.status}
-                    </strong>
-                </p>
-
-                ${
-                    item.status === "Pending"
-
-                    ?
-
-                    `<button
-                        onclick="markReturned(${index})"
-                    >
-                        ✓ Returned
-                    </button>`
-
-                    :
-
-                    ""
-                }
-
-                <button
-                    onclick="deleteBorrowItem(${index})"
-                >
-                    🗑 Delete
-                </button>
-
-            `;
-
-
-            list.appendChild(div);
-
-        }
-    );
-}
-
-
-// =================================
-// ADD
-// =================================
-
-async function addBorrowItem() {
-
-    const name =
-        document.getElementById(
-            "itemName"
-        ).value.trim();
-
-
-    const borrowedTo =
-        document.getElementById(
-            "borrowedTo"
-        ).value.trim();
-
-
-    const borrowDate =
-        document.getElementById(
-            "borrowDate"
-        ).value;
-
-
-    const returnDate =
-        document.getElementById(
-            "returnDate"
-        ).value;
-
-
-    if (!name || !borrowedTo) {
-
-        alert(
-            "Please enter item and person name."
-        );
-
-        return;
-    }
-
-
-    borrowItems.push({
-
-        id: Date.now(),
-
-        name,
-
-        borrowedTo,
-
-        borrowDate,
-
-        returnDate,
-
-        status: "Pending"
-
+    const items = data.borrowItems.filter(function (item) {
+        return item.userEmail === email;
     });
 
+    const area = document.getElementById("borrowList");
+    area.innerHTML = "";
 
-    await saveField(
-        "borrowItems",
-        borrowItems
-    );
+    if (items.length === 0) {
+        area.innerHTML = "<p>No borrowed items yet.</p>";
+        return;
+    }
 
-
-    showBorrowItems();
-
+    items.forEach(function (item) {
+        area.innerHTML += `
+            <div class="item">
+                <h3>${escapeText(item.name)}</h3>
+                <p>Borrowed to: ${escapeText(item.person)}</p>
+                <p>Borrow Date: ${escapeText(item.borrowDate)}</p>
+                <p>Return Date: ${escapeText(item.returnDate)}</p>
+                <p>Status: ${escapeText(item.status)}</p>
+                ${
+                    item.status === "Pending"
+                    ? `<button onclick="markReturned('${item.id}')">Returned</button>`
+                    : ""
+                }
+                <button onclick="deleteBorrow('${item.id}')">Delete</button>
+            </div>
+        `;
+    });
 }
 
+async function addBorrow() {
+    const name = document.getElementById("borrowName").value.trim();
+    const person = document.getElementById("person").value.trim();
+    const borrowDate = document.getElementById("borrowDate").value;
+    const returnDate = document.getElementById("returnDate").value;
 
-// =================================
-// MARK RETURNED
-// =================================
+    if (name === "" || person === "") {
+        alert("Enter item name and person.");
+        return;
+    }
 
-async function markReturned(index) {
+    const data = await getProjectData();
 
-    borrowItems[index].status =
-        "Returned";
+    data.borrowItems.push({
+        id: makeId(),
+        userEmail: getCurrentUser(),
+        name: name,
+        person: person,
+        borrowDate: borrowDate,
+        returnDate: returnDate,
+        status: "Pending"
+    });
 
+    await saveProjectData(data);
 
-    await saveField(
-        "borrowItems",
-        borrowItems
-    );
+    document.getElementById("borrowName").value = "";
+    document.getElementById("person").value = "";
+    document.getElementById("borrowDate").value = "";
+    document.getElementById("returnDate").value = "";
 
-
-    showBorrowItems();
-
+    loadBorrowItems();
 }
 
+async function markReturned(id) {
+    const data = await getProjectData();
 
-// =================================
-// DELETE
-// =================================
+    const item = data.borrowItems.find(function (item) {
+        return item.id === id && item.userEmail === getCurrentUser();
+    });
 
-async function deleteBorrowItem(index) {
-
-    borrowItems.splice(
-        index,
-        1
-    );
-
-
-    await saveField(
-        "borrowItems",
-        borrowItems
-    );
-
-
-    showBorrowItems();
-
+    if (item) {
+        item.status = "Returned";
+        await saveProjectData(data);
+        loadBorrowItems();
+    }
 }
 
+async function deleteBorrow(id) {
+    const data = await getProjectData();
+    const email = getCurrentUser();
 
-// =================================
-// DASHBOARD
-// =================================
+    const index = data.borrowItems.findIndex(function (item) {
+        return item.id === id && item.userEmail === email;
+    });
 
-function goDashboard() {
+    if (index === -1) return;
 
-    window.location.href =
-        "dashboard.html";
+    const item = data.borrowItems.splice(index, 1)[0];
+
+    data.trash.push({
+        type: "Borrow Item",
+        userEmail: email,
+        item: item
+    });
+
+    await saveProjectData(data);
+    loadBorrowItems();
 }
-
 
 loadBorrowItems();
