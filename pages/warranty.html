@@ -1,74 +1,53 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-    <title>Warranty Manager</title>
-
-    <link
-        rel="stylesheet"
-        href="../css/style.css"
-    >
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Organizer - Warranty</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
 </head>
-
 <body>
+
+<div class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="profile.html">Profile</a>
+    <a href="documents.html">Documents</a>
+    <a href="borrow-return.html">Borrow & Return</a>
+    <a href="warranty.html">Warranty</a>
+    <a href="reminders.html">Reminder</a>
+    <a href="trash.html">Trash</a>
+    <a href="settings.html">Settings</a>
+    <a href="#" onclick="logout()">Logout</a>
+</div>
 
 <div class="container">
 
-    <h1>🧾 Warranty Manager</h1>
-
-    <p>
-        Keep track of your product warranties.
-    </p>
-
+    <h1>Warranty Manager</h1>
 
     <div class="card">
+        <h2>Add Product</h2>
 
-        <input
-            id="productName"
-            placeholder="Product Name"
-        >
+        <label>Product Name</label>
+        <input id="product" placeholder="Mouse">
 
-        <input
-            id="purchaseDate"
-            type="date"
-        >
+        <label>Purchase Date</label>
+        <input id="purchaseDate" type="date">
 
-        <input
-            id="warrantyEnd"
-            type="date"
-        >
+        <label>Warranty End Date</label>
+        <input id="warrantyDate" type="date">
 
-        <input
-            id="receiptLocation"
-            placeholder="Receipt Location"
-        >
+        <label>Receipt Location</label>
+        <input id="receipt" placeholder="Receipts folder">
 
-        <button onclick="addWarranty()">
-            + Add Product
-        </button>
-
+        <button onclick="addWarranty()">Save Warranty</button>
     </div>
-
-
-    <h2>My Products</h2>
 
     <div id="warrantyList"></div>
 
-
-    <br>
-
-    <button onclick="goDashboard()">
-        ← Dashboard
-    </button>
-
 </div>
-
 
 <script src="../js/common.js"></script>
 <script src="../js/warranty.js"></script>
-
 </body>
-
 </html>

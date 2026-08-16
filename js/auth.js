@@ -1,202 +1,56 @@
-const signupForm =
-    document.getElementById("signupForm");
+async function signup() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-const loginForm =
-    document.getElementById("loginForm");
+    const message = document.getElementById("message");
 
+    if (name === "" || email === "" || password === "") {
+        message.textContent = "Please fill in all fields.";
+        return;
+    }
 
-// =================================
-// SIGN UP
-// =================================
+    const user = {
+        name: name,
+        email: email.toLowerCase(),
+        password: password
+    };
 
-if (signupForm) {
+    const result = await window.lifeOrganizer.createUser(user);
 
-    signupForm.addEventListener(
-        "submit",
-        async function(event) {
+    message.textContent = result.message;
 
-            event.preventDefault();
+    if (result.success) {
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("password").value = "";
 
-
-            const name =
-                document.getElementById("name").value.trim();
-
-            const email =
-                document.getElementById("email").value.trim();
-
-            const password =
-                document.getElementById("password").value;
-
-            const confirmPassword =
-                document.getElementById(
-                    "confirmPassword"
-                ).value;
-
-            const message =
-                document.getElementById("message");
-
-
-            // Check password
-
-            if (password !== confirmPassword) {
-
-                message.textContent =
-                    "Passwords do not match.";
-
-                return;
-            }
-
-
-            // Get all users
-
-            const users =
-                await window.electronAPI.getUsers();
-
-
-            // Check if email already exists
-
-            const emailExists =
-                users.some(function(user) {
-
-                    return user.email.toLowerCase()
-                        === email.toLowerCase();
-
-                });
-
-
-            if (emailExists) {
-
-                message.textContent =
-                    "This email is already registered.";
-
-                return;
-            }
-
-
-            // Create new user
-
-            const newUser = {
-
-                name: name,
-
-                email: email,
-
-                password: password
-
-            };
-
-
-            // Save new user
-
-            await window.electronAPI.saveUser(
-                newUser
-            );
-
-
-            message.style.color = "green";
-
-            message.textContent =
-                "Account created successfully!";
-
-
-            // Go to login page
-
-            setTimeout(function() {
-
-                window.location.href =
-                    "login.html";
-
-            }, 1000);
-
-        }
-    );
-
+        setTimeout(function () {
+            window.location.href = "login.html";
+        }, 800);
+    }
 }
 
+async function login() {
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("message");
 
-// =================================
-// LOGIN
-// =================================
+    const users = await window.lifeOrganizer.getUsers();
 
-if (loginForm) {
+    const user = users.find(function (item) {
+        return item.email.toLowerCase() === email &&
+               item.password === password;
+    });
 
-    loginForm.addEventListener(
-        "submit",
-        async function(event) {
+    if (!user) {
+        message.textContent = "Email or password is incorrect.";
+        return;
+    }
 
-            event.preventDefault();
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("userName", user.name);
+    localStorage.setItem("userEmail", user.email);
 
-
-            const email =
-                document.getElementById(
-                    "loginEmail"
-                ).value.trim();
-
-            const password =
-                document.getElementById(
-                    "loginPassword"
-                ).value;
-
-            const message =
-                document.getElementById("message");
-
-
-            // Get all users
-
-            const users =
-                await window.electronAPI.getUsers();
-
-
-            // Find matching user
-
-            const user =
-                users.find(function(user) {
-
-                    return (
-                        user.email.toLowerCase()
-                        === email.toLowerCase()
-                        &&
-                        user.password === password
-                    );
-
-                });
-
-
-            // Login successful
-
-            if (user) {
-
-                localStorage.setItem(
-                    "loggedIn",
-                    "true"
-                );
-
-
-                localStorage.setItem(
-                    "userName",
-                    user.name
-                );
-
-
-                localStorage.setItem(
-                    "userEmail",
-                    user.email
-                );
-
-
-                window.location.href =
-                    "dashboard.html";
-
-            }
-
-            else {
-
-                message.textContent =
-                    "Wrong email or password.";
-
-            }
-
-        }
-    );
-
+    window.location.href = "dashboard.html";
 }
