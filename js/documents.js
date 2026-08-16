@@ -1,237 +1,103 @@
-let documents = [];
+checkLogin();
 
-
-// =================================
-// LOAD DOCUMENTS
-// =================================
+let allDocuments = [];
 
 async function loadDocuments() {
+    const data = await getProjectData();
+    const email = getCurrentUser();
 
-    const user =
-        await getCurrentUser();
+    allDocuments = data.documents.filter(function (item) {
+        return item.userEmail === email;
+    });
 
-    if (!user) {
+    showDocuments(allDocuments);
+}
+
+function showDocuments(list) {
+    const area = document.getElementById("documentList");
+    area.innerHTML = "";
+
+    if (list.length === 0) {
+        area.innerHTML = "<p>No documents added yet.</p>";
         return;
     }
 
-    documents =
-        user.documents || [];
-
-    showDocuments();
+    list.forEach(function (item) {
+        area.innerHTML += `
+            <div class="item">
+                <h3>${escapeText(item.name)}</h3>
+                <p>Category: ${escapeText(item.category)}</p>
+                <p>Location: ${escapeText(item.location)}</p>
+                <p>Expiry: ${escapeText(item.expiry)}</p>
+                <button onclick="deleteDocument('${item.id}')">Delete</button>
+            </div>
+        `;
+    });
 }
-
-
-// =================================
-// SHOW DOCUMENTS
-// =================================
-
-function showDocuments() {
-
-    const list =
-        document.getElementById(
-            "documentList"
-        );
-
-    list.innerHTML = "";
-
-
-    if (documents.length === 0) {
-
-        list.innerHTML =
-            "<p>No documents added yet.</p>";
-
-        return;
-    }
-
-
-    documents.forEach(
-        function(document, index) {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className = "card";
-
-
-            div.innerHTML = `
-
-                <h3>📄 ${document.name}</h3>
-
-                <p>
-                    Category:
-                    ${document.category}
-                </p>
-
-                <p>
-                    Location:
-                    ${document.location}
-                </p>
-
-                <p>
-                    Expiry:
-                    ${document.expiry || "No expiry"}
-                </p>
-
-                <button
-                    onclick="deleteDocument(${index})"
-                >
-                    🗑 Delete
-                </button>
-
-            `;
-
-
-            list.appendChild(div);
-
-        }
-    );
-}
-
-
-// =================================
-// ADD DOCUMENT
-// =================================
 
 async function addDocument() {
+    const name = document.getElementById("docName").value.trim();
+    const category = document.getElementById("docCategory").value.trim();
+    const location = document.getElementById("docLocation").value.trim();
+    const expiry = document.getElementById("docExpiry").value;
 
-    const name =
-        document.getElementById(
-            "documentName"
-        ).value.trim();
-
-
-    const category =
-        document.getElementById(
-            "documentCategory"
-        ).value.trim();
-
-
-    const location =
-        document.getElementById(
-            "documentLocation"
-        ).value.trim();
-
-
-    const expiry =
-        document.getElementById(
-            "documentExpiry"
-        ).value;
-
-
-    if (!name) {
-
-        alert(
-            "Please enter document name."
-        );
-
+    if (name === "") {
+        alert("Enter document name.");
         return;
     }
 
+    const data = await getProjectData();
 
-    documents.push({
-
-        id: Date.now(),
-
-        name,
-
-        category,
-
-        location,
-
-        expiry
-
+    data.documents.push({
+        id: makeId(),
+        userEmail: getCurrentUser(),
+        name: name,
+        category: category,
+        location: location,
+        expiry: expiry
     });
 
+    await saveProjectData(data);
 
-    await saveField(
-        "documents",
-        documents
-    );
+    document.getElementById("docName").value = "";
+    document.getElementById("docCategory").value = "";
+    document.getElementById("docLocation").value = "";
+    document.getElementById("docExpiry").value = "";
 
-
-    document.getElementById(
-        "documentName"
-    ).value = "";
-
-
-    document.getElementById(
-        "documentCategory"
-    ).value = "";
-
-
-    document.getElementById(
-        "documentLocation"
-    ).value = "";
-
-
-    document.getElementById(
-        "documentExpiry"
-    ).value = "";
-
-
-    showDocuments();
-
+    loadDocuments();
 }
 
+async function deleteDocument(id) {
+    const data = await getProjectData();
+    const email = getCurrentUser();
 
-// =================================
-// DELETE DOCUMENT
-// =================================
-
-async function deleteDocument(index) {
-
-    const item =
-        documents.splice(
-            index,
-            1
-        )[0];
-
-
-    const user =
-        await getCurrentUser();
-
-
-    user.trash =
-        user.trash || [];
-
-
-    user.trash.push({
-
-        type: "document",
-
-        data: item
-
+    const index = data.documents.findIndex(function (item) {
+        return item.id === id && item.userEmail === email;
     });
 
+    if (index === -1) return;
 
-    await saveField(
-        "documents",
-        documents
-    );
+    const item = data.documents.splice(index, 1)[0];
 
+    data.trash.push({
+        type: "Document",
+        userEmail: email,
+        item: item
+    });
 
-    await saveField(
-        "trash",
-        user.trash
-    );
-
-
-    showDocuments();
-
+    await saveProjectData(data);
+    loadDocuments();
 }
 
+function searchDocuments() {
+    const text = document.getElementById("search").value.toLowerCase();
 
-// =================================
-// DASHBOARD
-// =================================
+    const result = allDocuments.filter(function (item) {
+        return item.name.toLowerCase().includes(text) ||
+               item.category.toLowerCase().includes(text);
+    });
 
-function goDashboard() {
-
-    window.location.href =
-        "dashboard.html";
+    showDocuments(result);
 }
-
 
 loadDocuments();
